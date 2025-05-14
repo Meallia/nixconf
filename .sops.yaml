@@ -1,0 +1,11 @@
+keys:
+  - &jonathan-mambo age1lz53zrh748fjlj0e3xcsqt8hy0e38th4p3295eu27h3hscdfrdus0f89at
+  - &jonathan-t460 age17rmu7wk8gk9l23ar30943jjyz2zw9p0m376jyvyqqpl0dczftcus3pn50f
+  - &server-dysprosium age10wmtkg68q3tkjjgqwaqhu7mvhsmp24u38pw0uexvkhukjfccy3wq39d26k
+creation_rules:
+  - path_regex: hosts/dysprosium/secrets/.*
+    key_groups:
+    - age:
+      - *jonathan-mambo
+      - *jonathan-t460
+      - *server-dysprosium
