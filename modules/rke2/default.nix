@@ -42,18 +42,17 @@ in {
     };
   };
   config = lib.mkIf cfg.enable {
-    #    environment.systemPackages = [
-    #      pkgs."rke2_${lib.strings.replaceStrings ["."] ["_"] cfg.version}"
-    #    ];
-    #    services.rke2 = {
-    #      enable = true;
-    #    };
-    environment.etc."rancher/rke2/config.yaml".text =
-      builtins.toJSON
+    environment.systemPackages = [
+      pkgs.rke2-pkgs."rke2_${lib.strings.replaceStrings ["."] ["_"] cfg.version}"
+    ];
+
+    # We don't want the default implementation
+    services.rke2.enable = lib.mkForce false;
+
+    environment.etc."rancher/rke2/config.yaml".source =
+      (pkgs.formats.yaml {}).generate "config.yaml"
       (
-        {
-          token = "${cfg.token}";
-        }
+        { token = "${cfg.token}"; }
         // lib.optionalAttrs ((cfg.role == "agent") || (cfg.ha && ! cfg.firstServer)) {server = "https://${cfg.server}:9345";}
         // lib.optionalAttrs (cfg.role == "server") {
           etcd-disable-snapshots = true;

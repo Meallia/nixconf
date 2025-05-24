@@ -1,12 +1,11 @@
-{ config
-, lib
-, modulesPath
-, ...
-}:
-let
-  cfg = config.server;
-in
 {
+  config,
+  lib,
+  modulesPath,
+  ...
+}: let
+  cfg = config.server;
+in {
   imports = [
     (modulesPath + "/profiles/minimal.nix")
     ./build-vm.nix
@@ -26,7 +25,7 @@ in
   };
   config = {
     system.stateVersion = config.system.nixos.release;
-    sops.age.sshKeyPaths = [ "/etc/ssh/ssh_host_ed25519_key" ];
+    sops.age.sshKeyPaths = ["/etc/ssh/ssh_host_ed25519_key"];
     services.openssh = {
       enable = true;
       startWhenNeeded = true;

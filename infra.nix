@@ -8,8 +8,8 @@ let
   };
   networks = {
     common = {
-      nameservers = [ "172.20.0.1" ];
-      timeServers = [ "172.20.0.1" ];
+      nameservers = ["172.20.0.1"];
+      timeServers = ["172.20.0.1"];
     };
     metal = {
       vlan = 1;
@@ -40,31 +40,29 @@ let
       }
     ];
   };
-  mkRke2Node =
-    { cluster
-    , role
-    , lanIp
-    ,
-    }: {
-      networking = {
-        inherit (networks.lan) defaultGateway;
-        inherit (networks.common) nameservers timeServers;
-        interfaces = {
-          enp2s0.ipv4 = mkIPv4Address networks.lan lanIp;
-        };
+  mkRke2Node = {
+    cluster,
+    role,
+    lanIp,
+  }: {
+    networking = {
+      inherit (networks.lan) defaultGateway;
+      inherit (networks.common) nameservers timeServers;
+      interfaces = {
+        enp2s0.ipv4 = mkIPv4Address networks.lan lanIp;
       };
-      server = {
-        inherit (defaults) sshPublicKeys user;
-      };
-      rke2 =
-        cluster
-        // {
-          inherit role;
-          enable = true;
-        };
     };
-in
-{
+    server = {
+      inherit (defaults) sshPublicKeys user;
+    };
+    rke2 =
+      cluster
+      // {
+        inherit role;
+        enable = true;
+      };
+  };
+in {
   hosts = {
     technetium = mkRke2Node {
       cluster = rke2Clusters.main;

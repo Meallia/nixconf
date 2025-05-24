@@ -1,8 +1,8 @@
-{ lib, ... }: {
+{lib, ...}: {
   config = {
     services.nscd.enableNsncd = false;
     services.nscd.enable = false;
-    system.nssModules = lib.mkForce [ ];
+    system.nssModules = lib.mkForce [];
 
     systemd = {
       coredump.enable = false;

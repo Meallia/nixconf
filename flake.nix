@@ -1,6 +1,6 @@
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11-small";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable-small";
 
     disko = {
       url = "github:nix-community/disko";
@@ -26,7 +26,9 @@
   }: let
     system = "x86_64-linux";
     pkgs = nixpkgs.legacyPackages.${system};
-    #    rke2-pkgs = inputs.rke2-pkgs.legacyPackages.${system};
+    overlays = [
+      (final: prev: {rke2-pkgs = inputs.rke2-pkgs.packages.${system};})
+    ];
     infra = import ./infra.nix;
   in {
     formatter.${system} = pkgs.alejandra;
@@ -34,10 +36,9 @@
 
     nixosConfigurations =
       nixpkgs.lib.attrsets.mapAttrs
-      (name: node:
+      (name: systemConfig:
         nixpkgs.lib.nixosSystem {
           inherit system;
-          #          specialArgs = { inherit inputs rke2-pkgs; };
           modules = [
             disko.nixosModules.disko
             sops-nix.nixosModules.sops
@@ -45,7 +46,8 @@
             ./hardware-config.nix
             ./modules/server
             ./modules/rke2
-            node
+            systemConfig
+            {nixpkgs.overlays = overlays;}
             {networking.hostName = name;}
           ];
         })
