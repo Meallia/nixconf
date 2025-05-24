@@ -1,37 +1,31 @@
-{
-  lib,
-  pkgs,
-  ...
+{ lib
+, pkgs
+, ...
 }: {
   imports = [
     ./disk-config.nix
     ./hardware-config.nix
     ../common.nix
   ];
-  system.stateVersion = "24.11";
+  #  environment.etc."rancher/rke2/manifests/install-flux.yaml".source = ./manifests/flux-install.yaml ;
 
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
-  boot.kernelParams = ["i915.enable_dc=0"];
-
-  environment.systemPackages = with pkgs; [
-    kubectl
-    k9s
-    cri-tools
+  systemd.tmpfiles.rules = [
+    "d  /var/lib/rancher 0755 root root - -"
+    "f+ /var/lib/rancher/rke2/server/manifests/flux-install.yaml 0755 root root - ${builtins.replaceStrings ["\n"] ["\\n"] (builtins.readFile ./manifests/flux-install.yaml)}"
   ];
 
-  security.sudo.enable = false;
-  networking = {
-    dhcpcd.enable = false;
-    defaultGateway = "172.20.20.1";
-    nameservers = ["172.20.0.1"];
-    interfaces.enp2s0.ipv4.addresses = [
-      {
-        address = "172.20.20.200";
-        prefixLength = 24;
-      }
-    ];
-  };
+  #  fileSystems.rke2-manifests = {
+  #    mountPoint = "/var/lib/rancher/rke2/server/manifests";
+  #    device = "overlay";
+  #    fsType = "overlay";
+  #    options = [
+  #      "lowerdir=/etc/rancher/rke2/manifests"
+  #      "upperdir=/var/lib/rancher/rke2/server/manifests"
+  #      "workdir=/var/lib/rancher/rke2/server/.manifests.work"
+  #    ];
+  #  };
 
-  virtualisation.containerd.enable = true;
+  environment.variables = {
+    KUBECONFIG = "/etc/rancher/rke2/rke2.yaml";
+  };
 }

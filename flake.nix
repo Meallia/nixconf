@@ -1,11 +1,22 @@
 {
-  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11-small";
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11-small";
 
-  inputs.disko.url = "github:nix-community/disko";
-  inputs.disko.inputs.nixpkgs.follows = "nixpkgs";
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
-  inputs.sops-nix.url = "github:Mic92/sops-nix";
-  inputs.sops-nix.inputs.nixpkgs.follows = "nixpkgs";
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    rke2-pkgs = {
+      url = "gitlab:jonathang/rke2-pkgs";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+  };
 
   outputs = inputs @ {
     nixpkgs,
@@ -14,25 +25,30 @@
     ...
   }: let
     system = "x86_64-linux";
-    pkgs = nixpkgs.legacyPackages."${system}";
+    pkgs = nixpkgs.legacyPackages.${system};
+    #    rke2-pkgs = inputs.rke2-pkgs.legacyPackages.${system};
+    infra = import ./infra.nix;
   in {
-    formatter."${system}" = pkgs.alejandra;
-    devShells."${system}".default = pkgs.mkShell {
-      nativeBuildInputs = with pkgs; [
-        sops
-        age
-        ssh-to-age
-        gnumake
-      ];
-    };
-    nixosConfigurations.dysprosium = nixpkgs.lib.nixosSystem {
-      inherit system;
-      modules = [
-        disko.nixosModules.disko
-        sops-nix.nixosModules.sops
-        {networking.hostName = "dysprosium";}
-        ./hosts/dysprosium
-      ];
-    };
+    formatter.${system} = pkgs.alejandra;
+    devShells.${system}.default = import ./shell.nix {inherit pkgs;};
+
+    nixosConfigurations =
+      nixpkgs.lib.attrsets.mapAttrs
+      (name: node:
+        nixpkgs.lib.nixosSystem {
+          inherit system;
+          #          specialArgs = { inherit inputs rke2-pkgs; };
+          modules = [
+            disko.nixosModules.disko
+            sops-nix.nixosModules.sops
+            ./disk-config.nix
+            ./hardware-config.nix
+            ./modules/server
+            ./modules/rke2
+            node
+            {networking.hostName = name;}
+          ];
+        })
+      infra.hosts;
   };
 }
