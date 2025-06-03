@@ -10,17 +10,12 @@
     };
   };
 
-  outputs = { self, nixpkgs, home-manager, ... }@inputs: {
-    nixosConfigurations.default = nixpkgs.lib.nixosSystem {
-      specialArgs = {inherit inputs;};
+  outputs = inputs: {
+    nixosConfigurations.t460 = inputs.nixpkgs.lib.nixosSystem {
+      specialArgs = inputs;
       modules = [
-        ./configuration.nix
-        home-manager.nixosModules.home-manager
-	{
-	  home-manager.useGlobalPkgs = true;
-          home-manager.useUserPackages = true;
-          home-manager.users.jonathan = ./home.nix;
-        }
+        inputs.home-manager.nixosModules.home-manager
+        ./hosts/t460-jonathan/configuration.nix
       ];
     };
   };

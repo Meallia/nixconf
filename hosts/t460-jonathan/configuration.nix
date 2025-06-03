@@ -1,16 +1,22 @@
 # Edit this configuration file to define what should be installed on
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
-
-{ config, pkgs, ... }@inputs:
-
 {
-  imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-    ];
+  config,
+  pkgs,
+  ...
+} @ inputs: {
+  imports = [
+    ./hardware-configuration.nix
+    ../../nixosModules/nix.nix
+    ../../nixosModules/autoUpgrade.nix
+  ];
 
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nix.settings.experimental-features = ["nix-command" "flakes"];
+
+  home-manager.useGlobalPkgs = true;
+  home-manager.useUserPackages = true;
+  home-manager.users.jonathan = ./home.nix;
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
@@ -20,7 +26,7 @@
   boot.initrd.luks.devices."luks-73a213be-5caf-4de5-8837-526e37bc0258".device = "/dev/disk/by-uuid/73a213be-5caf-4de5-8837-526e37bc0258";
   networking.hostName = "t460"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
- 
+
   hardware.cpu.intel.updateMicrocode = true;
 
   # Configure network proxy if necessary
@@ -103,23 +109,25 @@
   users.users.jonathan = {
     isNormalUser = true;
     description = "Jonathan GAYVALLET";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = ["networkmanager" "wheel"];
     packages = with pkgs; [
       kdePackages.kate
     ];
   };
 
   security.sudo.extraRules = [
-   { users = [ "jonathan" ];
-    commands = [
-       { command = "ALL" ;
-         options= [
-		"NOPASSWD"
-		]; 
-      }
-    ];
-  }
-];
+    {
+      users = ["jonathan"];
+      commands = [
+        {
+          command = "ALL";
+          options = [
+            "NOPASSWD"
+          ];
+        }
+      ];
+    }
+  ];
   # Install firefox.
   programs.firefox.enable = true;
 
@@ -165,5 +173,4 @@
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
   system.stateVersion = "25.05"; # Did you read the comment?
-
 }
