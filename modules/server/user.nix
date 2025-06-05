@@ -2,6 +2,7 @@
   cfg = config.server;
 in {
   config = {
+    services.userborn.enable = true;
     users.mutableUsers = false;
     users.users."${cfg.user}" = {
       isNormalUser = true;

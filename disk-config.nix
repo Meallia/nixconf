@@ -14,7 +14,7 @@
                 type = "filesystem";
                 format = "vfat";
                 mountpoint = "/boot";
-                mountOptions = ["umask=0077"];
+                mountOptions = [ "umask=0077" ];
               };
             };
             root = {
@@ -24,22 +24,27 @@
                 format = "ext4";
                 mountpoint = "/";
                 mountOptions = [
-                  "defaults"
                   "noatime"
-                  "discard"
                 ];
               };
             };
+            swap = {
+              size = "4G";
+              content = {
+                type = "swap";
+                discardPolicy = "both";
+              };
+            };
             nix = {
-              size = "5G";
+              # A full system should be around 3G
+              # We provision something like 3 times this amount to be safe
+              size = "10G";
               content = {
                 type = "filesystem";
                 format = "ext4";
                 mountpoint = "/nix";
                 mountOptions = [
-                  "defaults"
                   "noatime"
-                  "discard"
                 ];
               };
             };
@@ -50,9 +55,7 @@
                 format = "ext4";
                 mountpoint = "/home";
                 mountOptions = [
-                  "defaults"
                   "noatime"
-                  "discard"
                   "nodev"
                   "noexec"
                   "nosuid"
@@ -66,9 +69,7 @@
                 format = "ext4";
                 mountpoint = "/opt";
                 mountOptions = [
-                  "defaults"
                   "noatime"
-                  "discard"
                   "nodev"
                   "nosuid"
                 ];
@@ -81,9 +82,7 @@
                 format = "ext4";
                 mountpoint = "/var";
                 mountOptions = [
-                  "defaults"
                   "noatime"
-                  "discard"
                   "nodev"
                   "noexec"
                   "nosuid"
@@ -97,9 +96,7 @@
                 format = "ext4";
                 mountpoint = "/var/log";
                 mountOptions = [
-                  "defaults"
                   "noatime"
-                  "discard"
                   "nodev"
                   "noexec"
                   "nosuid"
@@ -113,9 +110,7 @@
                 format = "ext4";
                 mountpoint = "/var/lib";
                 mountOptions = [
-                  "defaults"
                   "noatime"
-                  "discard"
                   "nodev"
                 ];
               };
@@ -127,9 +122,7 @@
                 format = "ext4";
                 mountpoint = "/var/lib/longhorn";
                 mountOptions = [
-                  "defaults"
                   "noatime"
-                  "discard"
                   "nodev"
                   "noexec"
                   "nosuid"

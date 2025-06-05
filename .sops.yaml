@@ -1,11 +1,16 @@
 keys:
   - &jonathan-mambo age1lz53zrh748fjlj0e3xcsqt8hy0e38th4p3295eu27h3hscdfrdus0f89at
   - &jonathan-t460 age17rmu7wk8gk9l23ar30943jjyz2zw9p0m376jyvyqqpl0dczftcus3pn50f
-  - &server-dysprosium age10wmtkg68q3tkjjgqwaqhu7mvhsmp24u38pw0uexvkhukjfccy3wq39d26k
+  - &server-technetium age19w46kq5s7nhkevp3rfc6krk4vmwrcdjh83wvju4j42ygsdl875pqxlnm66
+  - &server-promethium age16r4kfc40velug7yjefc49h60ry462vcnjfu846aywrsc2ueqmfvqzsmpch
+  - &server-dysprosium age17w5ujc04az6c4u3utyc0ccx96gpw6n47mkkvlj8dhjdjzyk7pf8qwjq3sl
+  - &cluster-main age10yj8zdt96ua4qwueleccevna4uex7rq2an9dr60ufknwzt8geu2smkeprd
 creation_rules:
-  - path_regex: hosts/dysprosium/secrets/.*
+  - path_regex: ^secrets/rke2/main.yaml
     key_groups:
-    - age:
-      - *jonathan-mambo
-      - *jonathan-t460
-      - *server-dysprosium
+      - age:
+          - *jonathan-mambo
+          - *jonathan-t460
+          - *server-technetium
+          - *server-promethium
+          - *server-dysprosium

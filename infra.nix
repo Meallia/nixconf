@@ -26,31 +26,29 @@ let
   };
   rke2Clusters = {
     main = {
-      server = "172.20.20.20";
-      token = "abcdefghijkl";
+      server = "172.20.20.23";
       ha = false;
       version = "1.33";
+      sopsFile = ./secrets/rke2/main.yaml;
     };
-  };
-  mkIPv4Address = network: address: {
-    addresses = [
-      {
-        inherit address;
-        prefixLength = network.prefixLength;
-      }
-    ];
   };
   mkRke2Node = {
     cluster,
     role,
+    lanInterface ? "enp2s0",
     lanIp,
+    hardware,
+    firstServer ? false,
   }: {
+    imports = [(./hardware + "/${hardware}.nix")];
     networking = {
-      inherit (networks.lan) defaultGateway;
       inherit (networks.common) nameservers timeServers;
-      interfaces = {
-        enp2s0.ipv4 = mkIPv4Address networks.lan lanIp;
-      };
+    };
+    systemd.network.networks."30-${lanInterface}" = {
+      matchConfig.Name = "${lanInterface}";
+      address = ["${lanIp}/${toString networks.lan.prefixLength}"];
+      routes = [{Gateway = networks.lan.defaultGateway;}];
+      linkConfig.RequiredForOnline = "routable";
     };
     server = {
       inherit (defaults) sshPublicKeys user;
@@ -58,7 +56,8 @@ let
     rke2 =
       cluster
       // {
-        inherit role;
+        inherit role firstServer;
+        interface = lanInterface;
         enable = true;
       };
   };
@@ -66,18 +65,21 @@ in {
   hosts = {
     technetium = mkRke2Node {
       cluster = rke2Clusters.main;
-      role = "server";
+      role = "agent";
       lanIp = "172.20.20.21";
+      hardware = "hp-prodesk-mini";
     };
     promethium = mkRke2Node {
       cluster = rke2Clusters.main;
       role = "agent";
       lanIp = "172.20.20.22";
+      hardware = "hp-prodesk-mini";
     };
     dysprosium = mkRke2Node {
       cluster = rke2Clusters.main;
-      role = "agent";
+      role = "server";
       lanIp = "172.20.20.23";
+      hardware = "hp-prodesk-mini";
     };
   };
 }

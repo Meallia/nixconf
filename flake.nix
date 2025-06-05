@@ -39,15 +39,16 @@
       (name: systemConfig:
         nixpkgs.lib.nixosSystem {
           inherit system;
+          specialArgs = {inherit inputs;};
           modules = [
             disko.nixosModules.disko
             sops-nix.nixosModules.sops
             ./disk-config.nix
-            ./hardware-config.nix
             ./modules/server
             ./modules/rke2
             systemConfig
             {nixpkgs.overlays = overlays;}
+            {services.getty.autologinUser = "root";} # for debug
             {networking.hostName = name;}
           ];
         })
