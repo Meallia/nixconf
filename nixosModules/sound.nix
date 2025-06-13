@@ -1,4 +1,4 @@
-inputs @ {...}: {
+{...}: {
   services.pulseaudio.enable = false;
   hardware.alsa.enablePersistence = true;
   security.rtkit.enable = true;

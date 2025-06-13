@@ -1,8 +1,11 @@
-inputs: {
+{...}: {
   boot.initrd.availableKernelModules = ["nvme" "xhci_pci" "ahci" "usbhid" "usb_storage" "sd_mod" "sr_mod"];
   boot.kernelModules = ["kvm_amd"];
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.kernelParams = [
+    # "mitigations=off"
+  ];
 
   hardware.enableRedistributableFirmware = true;
 

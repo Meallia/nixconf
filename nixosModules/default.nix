@@ -1,9 +1,4 @@
-inputs @ {
-  lib,
-  config,
-  pkgs,
-  ...
-}: {
+{...}: {
   imports = [
     ./autoUpgrade.nix
     ./home-manager.nix

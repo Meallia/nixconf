@@ -1,4 +1,4 @@
-inputs: {
+{...}: {
   security.sudo.enable = true;
   security.sudo.extraRules = [
     {

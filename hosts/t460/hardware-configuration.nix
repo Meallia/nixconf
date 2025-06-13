@@ -1,4 +1,4 @@
-inputs: {
+{...}: {
   boot.initrd.availableKernelModules = ["xhci_pci" "ahci" "sd_mod" "rtsx_pci_sdmmc"];
   boot.kernelModules = ["kvm_intel"];
   boot.loader.systemd-boot.enable = true;

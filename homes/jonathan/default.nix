@@ -1,10 +1,20 @@
 {
-  config,
+  inputs,
   pkgs,
   ...
 }: {
   home.username = "jonathan";
   home.homeDirectory = "/home/jonathan";
+
+  imports = [
+    inputs.plasma-manager.homeManagerModules.plasma-manager
+    inputs.nvf.homeManagerModules.default
+    ./fonts.nix
+    ./keyboard.nix
+    ./kubernetes.nix
+    ./nvf.nix
+    ./shell.nix
+  ];
 
   home.stateVersion = "25.05";
   home.packages = with pkgs; [
@@ -19,6 +29,7 @@
     python3
     python3.pkgs.pydevd
     nixd
+    alejandra
   ];
 
   #TODO: set fonts
@@ -33,7 +44,16 @@
   };
 
   programs.firefox = {enable = true;};
-  programs.bash = {
+
+  programs.lf = {
+    enable = true;
+  };
+
+  programs.command-not-found = {
+    enable = true;
+  };
+
+  programs.nh = {
     enable = true;
   };
 
