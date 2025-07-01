@@ -8,7 +8,7 @@
   fonts.fontconfig = {
     enable = true;
   };
-  programs.plasma.enable = true;
+
   programs.plasma.fonts.fixedWidth = {
     family = "JetBrainsMono Nerd Font";
     pointSize = 12;

@@ -4,7 +4,7 @@
   pkgs,
   ...
 }: let
-  cfgKey = "permanentSSHSessions";
+  cfgKey = "permanentSSH";
   cfg = config.${cfgKey};
 in {
   options.${cfgKey} = {
@@ -14,10 +14,13 @@ in {
       type = lib.types.attrsOf (
         lib.types.submodule {
           options = {
-            host = lib.mkOption {type = lib.types.string;};
-            name = lib.mkOption { type = lib.types.string; default = null;};
+            host = lib.mkOption {type = lib.types.str;};
+            name = lib.mkOption {
+              type = lib.types.nullOr lib.types.str;
+              default = null;
+            };
             tunnels = lib.mkOption {
-              type = lib.types.listOf lib.types.string;
+              type = lib.types.listOf lib.types.str;
               default = [];
             };
           };
@@ -27,12 +30,10 @@ in {
     };
   };
   config = lib.mkIf cfg.enable {
-    systemd.services =
-      lib.mapAttrs' (name: session:
-      let
-        name' = builtins.head ( builtins.filter builtins.isString [session.name name]);
-      in
-      {
+    systemd.user.services =
+      lib.mapAttrs' (name: session: let
+        name' = with builtins; head (filter isString [session.name name]);
+      in {
         name = "ssh-${name'}";
         value = {
           Unit.Description = "SSH Session ${name'}";
@@ -43,7 +44,7 @@ in {
             KillMode = "mixed";
             ExecStart = let
               tunnels = builtins.concatStringsSep " " session.tunnels;
-            in "${cfg.pkg}/bin/ssh -M -oBatchMode=yes -oExitOnForwardFailure=yes  -v -nNT  ${session.host} ${tunnels}";
+            in "${lib.getExe cfg.pkg} -M -oBatchMode=yes -oExitOnForwardFailure=yes -v -nNT  ${session.host} ${tunnels}";
           };
         };
       })

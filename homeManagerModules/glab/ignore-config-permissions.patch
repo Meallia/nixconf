@@ -1,0 +1,21 @@
+diff --git a/internal/config/perms.go b/internal/config/perms.go
+index 180390e2..c2d6efa7 100644
+--- a/internal/config/perms.go
++++ b/internal/config/perms.go
+@@ -2,13 +2,8 @@ package config
+ 
+ import (
+ 	"io/fs"
+-	"runtime"
+ )
+ 
+ func HasSecurePerms(m fs.FileMode) bool {
+-	if runtime.GOOS == "windows" {
+-		return true
+-	} else {
+-		return m == 0o600
+-	}
++	return true
+ }
+-- 
+2.49.0

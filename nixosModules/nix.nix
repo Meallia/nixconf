@@ -1,6 +1,8 @@
 {config, ...}: {
   system.stateVersion = config.system.nixos.release;
   nixpkgs.config.allowUnfree = true;
+  boot.loader.systemd-boot.configurationLimit = 5;
+
   nix = {
     gc = {
       automatic = true;

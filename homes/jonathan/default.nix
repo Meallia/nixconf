@@ -7,12 +7,15 @@
   home.homeDirectory = "/home/jonathan";
 
   imports = [
-    inputs.plasma-manager.homeManagerModules.plasma-manager
     inputs.nvf.homeManagerModules.default
     ./fonts.nix
+    ./glab.nix
     ./keyboard.nix
     ./kubernetes.nix
+    ./nix.nix
     ./nvf.nix
+    ./plasma.nix
+    ./python.nix
     ./shell.nix
   ];
 
@@ -25,11 +28,13 @@
     libreoffice-qt
     vlc
     yt-dlp
-    jetbrains.pycharm-professional
-    python3
-    python3.pkgs.pydevd
     nixd
     alejandra
+    mc
+    pre-commit
+    ripgrep
+    bat
+    slack
   ];
 
   #TODO: set fonts
@@ -43,7 +48,9 @@
     ignores = [];
   };
 
-  programs.firefox = {enable = true;};
+  programs.firefox = {
+    enable = true;
+  };
 
   programs.lf = {
     enable = true;

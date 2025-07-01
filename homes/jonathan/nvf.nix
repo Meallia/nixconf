@@ -1,4 +1,5 @@
-{...}: {
+{ ... }:
+{
   programs.nvf = {
     enable = true;
     defaultEditor = true;
@@ -9,6 +10,12 @@
         vimAlias = true;
         lineNumberMode = "number";
         spellcheck.enable = true;
+
+        options = {
+          shiftwidth = 2;
+          tabstop = 2;
+          softtabstop = 2;
+        };
 
         theme = {
           enable = true;
@@ -28,6 +35,7 @@
 
         languages = {
           enableTreesitter = true;
+          enableFormat = true;
 
           rust.enable = true;
           python.enable = false;

@@ -10,6 +10,7 @@
     kubernetes-helm
     kind
     trivy
+    kustomize
   ];
 
   programs.kubecolor = {
